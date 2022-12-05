@@ -1,16 +1,16 @@
 {
-	"name": "trExecutaPipelineRelatorios",
+	"name": "trigger_convenio115",
 	"properties": {
-		"description": "Este gatilho aciona a pipeline dos relatórios uma vez por dia.",
+		"description": "teste de fuso horário",
 		"annotations": [],
 		"runtimeState": "Stopped",
 		"pipelines": [],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
-				"frequency": "Day",
-				"interval": 1,
-				"startTime": "2022-10-21T12:53:00",
+				"frequency": "Hour",
+				"interval": 30,
+				"startTime": "2022-11-05T12:00:00",
 				"timeZone": "E. South America Standard Time"
 			}
 		}
