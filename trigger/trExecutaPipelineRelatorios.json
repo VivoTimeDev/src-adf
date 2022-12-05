@@ -3,15 +3,8 @@
 	"properties": {
 		"description": "Este gatilho aciona a pipeline dos relatórios uma vez por dia.",
 		"annotations": [],
-		"runtimeState": "Started",
-		"pipelines": [
-			{
-				"pipelineReference": {
-					"referenceName": "plCargaRelatoriosOnline",
-					"type": "PipelineReference"
-				}
-			}
-		],
+		"runtimeState": "Stopped",
+		"pipelines": [],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {

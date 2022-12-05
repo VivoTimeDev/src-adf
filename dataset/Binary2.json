@@ -1,0 +1,19 @@
+{
+	"name": "Binary2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blob_storage_conv86",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "adj_AL_20190401_20190430.rpt",
+				"container": "arq-stage-conv115"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
