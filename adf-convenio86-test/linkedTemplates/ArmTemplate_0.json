@@ -1,0 +1,860 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Nome do Data Factory",
+			"defaultValue": "adf-convenio86-test"
+		},
+		"AzureFileShareStorageConv86_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'AzureFileShareStorageConv86'"
+		},
+		"AzureSqlDatabaseConv86_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'AzureSqlDatabaseConv86'"
+		},
+		"blob_storage_conv86_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadeia de caracteres segura para 'connectionString' de 'blob_storage_conv86'"
+		},
+		"AzureBlobStorage1_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/76461b8e-edbd-464c-ad30-b13ba994709c/resourceGroups/rg-convenio86-development/providers/Microsoft.Storage/storageAccounts/stconvenio86dev"
+		},
+		"AzureBlobStorage1_properties_groupId": {
+			"type": "string",
+			"defaultValue": "blob"
+		},
+		"AzureBlobStorage1_properties_fqdns": {
+			"type": "array",
+			"defaultValue": [
+				"stconvenio86dev.blob.core.windows.net"
+			]
+		},
+		"AzureBlobStorage1_pe_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/cd4ed2c4-eb6d-48d7-98b7-e6db50218b71/resourceGroups/rg-convenio86-test/providers/Microsoft.Storage/storageAccounts/stconvenio86test"
+		},
+		"AzureBlobStorage1_pe_properties_groupId": {
+			"type": "string",
+			"defaultValue": "blob"
+		},
+		"AzureBlobStorage1_pe_properties_fqdns": {
+			"type": "array",
+			"defaultValue": [
+				"stconvenio86test.blob.core.windows.net"
+			]
+		},
+		"AzureFileStorageEndPoint1_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/cd4ed2c4-eb6d-48d7-98b7-e6db50218b71/resourceGroups/rg-convenio86-test/providers/Microsoft.Storage/storageAccounts/stconvenio86test"
+		},
+		"AzureFileStorageEndPoint1_properties_groupId": {
+			"type": "string",
+			"defaultValue": "file"
+		},
+		"AzureFileStorageEndPoint1_properties_fqdns": {
+			"type": "array",
+			"defaultValue": [
+				"stconvenio86test.file.core.windows.net"
+			]
+		},
+		"AzureSqlDatabaseConv86_properties_privateLinkResourceId": {
+			"type": "string",
+			"defaultValue": "/subscriptions/cd4ed2c4-eb6d-48d7-98b7-e6db50218b71/resourceGroups/rg-convenio86-test/providers/Microsoft.Sql/servers/sql-convenio86-test"
+		},
+		"AzureSqlDatabaseConv86_properties_groupId": {
+			"type": "string",
+			"defaultValue": "sqlServer"
+		},
+		"AzureSqlDatabaseConv86_properties_fqdns": {
+			"type": "array",
+			"defaultValue": [
+				"sql-convenio86-test.database.windows.net"
+			]
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimeConv86')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks",
+			"apiVersion": "2018-06-01",
+			"properties": {},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adf_carga_conv86')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Carga diária dos arquivos de contestações",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-10-16T21:00:00",
+						"timeZone": "E. South America Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trExecutaPipelineRelatorios')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Este gatilho aciona a pipeline dos relatórios uma vez por dia.",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-10-21T12:53:00",
+						"timeZone": "E. South America Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger_carga_contestacao')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2022-11-01T00:21:00",
+						"timeZone": "E. South America Standard Time",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								21
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger_convenio115')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "teste de fuso horário",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 30,
+						"startTime": "2022-11-05T12:00:00",
+						"timeZone": "E. South America Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureFileShareStorageConv86')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureFileStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureFileShareStorageConv86_connectionString')]",
+					"fileShare": "fsconvenio86"
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimeConv86",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeConv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseConv86')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabaseConv86_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimeConv86",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeConv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/blob_storage_conv86')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "AzureBlobStorage",
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('blob_storage_conv86_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "integrationRuntimeConv86",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/integrationRuntimeConv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0,
+							"cleanup": true
+						},
+						"pipelineExternalComputeScaleProperties": {
+							"timeToLive": 60
+						}
+					}
+				},
+				"managedVirtualNetwork": {
+					"type": "ManagedVirtualNetworkReference",
+					"referenceName": "default"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default/AzureBlobStorage1')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"privateLinkResourceId": "[parameters('AzureBlobStorage1_properties_privateLinkResourceId')]",
+				"groupId": "[parameters('AzureBlobStorage1_properties_groupId')]",
+				"fqdns": "[parameters('AzureBlobStorage1_properties_fqdns')]"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default/AzureBlobStorage1_pe')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"privateLinkResourceId": "[parameters('AzureBlobStorage1_pe_properties_privateLinkResourceId')]",
+				"groupId": "[parameters('AzureBlobStorage1_pe_properties_groupId')]",
+				"fqdns": "[parameters('AzureBlobStorage1_pe_properties_fqdns')]"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default/AzureFileStorageEndPoint1')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"privateLinkResourceId": "[parameters('AzureFileStorageEndPoint1_properties_privateLinkResourceId')]",
+				"groupId": "[parameters('AzureFileStorageEndPoint1_properties_groupId')]",
+				"fqdns": "[parameters('AzureFileStorageEndPoint1_properties_fqdns')]"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/default/AzureSqlDatabaseConv86')]",
+			"type": "Microsoft.DataFactory/factories/managedVirtualNetworks/managedPrivateEndpoints",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"privateLinkResourceId": "[parameters('AzureSqlDatabaseConv86_properties_privateLinkResourceId')]",
+				"groupId": "[parameters('AzureSqlDatabaseConv86_properties_groupId')]",
+				"fqdns": "[parameters('AzureSqlDatabaseConv86_properties_fqdns')]"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/managedVirtualNetworks/default')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Arq_Conv115_Controle')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "blob_storage_conv86",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"NomeArqControle": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Conv115"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().NomeArqControle",
+							"type": "Expression"
+						},
+						"container": "arq-conv115"
+					},
+					"columnDelimiter": "#$%",
+					"encodingName": "ISO-8859-1",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/blob_storage_conv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Arq_Conv115_Controle_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "blob_storage_conv86",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Conv115"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "parquet/Convenio115Controle",
+						"container": "arq-conv115"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/blob_storage_conv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Arq_Conv115_ItemNF_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "blob_storage_conv86",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Conv115"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "teste",
+						"folderPath": "parquet/convenio115ItemNF",
+						"container": "arq-conv115"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/blob_storage_conv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Arq_Conv115_MestreNF_parquet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "blob_storage_conv86",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Conv115"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "teste",
+						"folderPath": "parquet/convenio115MestreNF",
+						"container": "arq-conv115"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/blob_storage_conv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CVTB_ATIS_NAO_PAGO')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseConv86",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Atis"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID_ATIS_NAO_PAGO",
+						"type": "decimal",
+						"precision": 28,
+						"scale": 0
+					},
+					{
+						"name": "ID_LOTE_ARQUIVO",
+						"type": "decimal",
+						"precision": 28,
+						"scale": 0
+					},
+					{
+						"name": "COD_IDENT_CLI",
+						"type": "varchar"
+					},
+					{
+						"name": "CPF_CNPJ",
+						"type": "varchar"
+					},
+					{
+						"name": "TIPO_DOCUMENTO",
+						"type": "varchar"
+					},
+					{
+						"name": "UF_FATURA",
+						"type": "varchar"
+					},
+					{
+						"name": "NUM_FATURA_ORIGINAL",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_ABERTURA_IMPUG",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DT_VENC_FATURA_ORIGINAL",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "VLR_FATURA",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "COD_FAC_CD",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "VLR_CONTESTADO",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "DT_AJUSTE",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DESCR_OPERADORA",
+						"type": "varchar"
+					},
+					{
+						"name": "COD_OPERADORA",
+						"type": "varchar"
+					},
+					{
+						"name": "CONTACONTABIL",
+						"type": "varchar"
+					},
+					{
+						"name": "DESCRCONTACONTABIL",
+						"type": "varchar"
+					},
+					{
+						"name": "SALDO_POS_AJUSTE",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "SALDO_DEVEDOR",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "COD_MOTIVO_AJUSTE",
+						"type": "varchar"
+					},
+					{
+						"name": "NOTA_FISCAL_ORIG",
+						"type": "varchar"
+					},
+					{
+						"name": "SERIE_NF",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_EMISSAO_FATURA",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "VLR_ORIG_NSFT",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "TIPO_OPERACAO",
+						"type": "varchar"
+					},
+					{
+						"name": "FAMILIA_PRODUTOS",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_FECHAMENTO",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DT_CONTA",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RECEITA_OPERADORA",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_VENCTO_BOLETO_ULT",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "MOTIVO_OPERACAO",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "CONVENIO",
+					"table": "CVTB_ATIS_NAO_PAGO"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseConv86')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CVTB_ATIS_PAGO')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseConv86",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID_ATIS_PAGO",
+						"type": "decimal",
+						"precision": 28,
+						"scale": 0
+					},
+					{
+						"name": "ID_LOTE_ARQUIVO",
+						"type": "decimal",
+						"precision": 28,
+						"scale": 0
+					},
+					{
+						"name": "COD_IDENT_CLI",
+						"type": "varchar"
+					},
+					{
+						"name": "CPF_CNPJ",
+						"type": "varchar"
+					},
+					{
+						"name": "TIPO_DOCUMENTO",
+						"type": "varchar"
+					},
+					{
+						"name": "UF_FATURA",
+						"type": "varchar"
+					},
+					{
+						"name": "NUM_FATURA_ORIGINAL",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_ABERTURA_IMPUG",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DT_VENC_FATURA_ORIGINAL",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "VLR_FATURA",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "COD_FAC_CD",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "FATURA_ATRIBUIDA",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_AJUSTE",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DESCR_OPERADORA",
+						"type": "varchar"
+					},
+					{
+						"name": "COD_OPERADORA",
+						"type": "varchar"
+					},
+					{
+						"name": "CONTACONTABIL",
+						"type": "varchar"
+					},
+					{
+						"name": "DESCRCONTACONTABIL",
+						"type": "varchar"
+					},
+					{
+						"name": "COD_MOTIVO_AJUSTE",
+						"type": "varchar"
+					},
+					{
+						"name": "NOTA_FISCAL_ORIG",
+						"type": "varchar"
+					},
+					{
+						"name": "SERIE_NF",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_EMISSAO_FATURA",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "VLR_ORIG_NSFT",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "TIPO_OPERACAO",
+						"type": "varchar"
+					},
+					{
+						"name": "VLR_DEVOLUCAO",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "VLR_CREDITO_AJUSTE",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "VLR_AJUSTE_ITEM",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "VLR_CREDITO_ITEM",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "FAMILIA_PRODUTOS",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_FECHAMENTO",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "DT_VENCTO_FUTURA",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RECEITA_OPERADORA",
+						"type": "varchar"
+					},
+					{
+						"name": "DT_VENCTO_BOLETO_ULT",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "SALDO_DEVEDOR",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "SALDO_POS_AJUSTE",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "VLR_CONTESTADO",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "COD_CREDITO",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 0
+					},
+					{
+						"name": "VLR_FATURA_FUTURA",
+						"type": "decimal",
+						"precision": 15,
+						"scale": 2
+					},
+					{
+						"name": "NUM_FATURA_FUTURA",
+						"type": "varchar"
+					},
+					{
+						"name": "MOTIVO_OPERACAO",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "CONVENIO",
+					"table": "CVTB_ATIS_PAGO"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseConv86')]"
+			]
+		}
+	]
+}
