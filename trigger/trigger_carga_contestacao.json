@@ -1,6 +1,7 @@
 {
 	"name": "trigger_carga_contestacao",
 	"properties": {
+		"description": "Carga dos arquivos de Contestações",
 		"annotations": [],
 		"runtimeState": "Stopped",
 		"pipelines": [],
@@ -9,7 +10,7 @@
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 1,
-				"startTime": "2022-11-01T00:21:00",
+				"startTime": "2022-11-01T13:30:00",
 				"timeZone": "E. South America Standard Time",
 				"schedule": {
 					"minutes": [
