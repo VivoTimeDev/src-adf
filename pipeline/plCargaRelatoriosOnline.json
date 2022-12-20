@@ -54,6 +54,8 @@
 		"folder": {
 			"name": "Relatorios"
 		},
-		"annotations": []
-	}
+		"annotations": [],
+		"lastPublishTime": "2022-12-05T13:46:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
 }
